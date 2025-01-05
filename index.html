@@ -4,20 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SF Pro Font Introduction</title>
+    <link rel="stylesheet" href="https://anson10124.github.io/SF-Pro-Family/SF-Pro-Family.css">
     <style>
-        @font-face {
-            font-family: 'SF Pro';
-            src: url('https://applesocial.s3.amazonaws.com/assets/styles/fonts/sanfrancisco/sanfranciscodisplay-regular-webfont.woff');
+
+        :root {
+            --bg-color: #f8f8f8;
+            --text-color: #333;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1a1a1a;
+                --text-color: #f0f0f0;
+                --card-bg: #2a2a2a;
+                --card-shadow: 0 4px 6px rgba(255, 255, 255, 0.1);
+            }
         }
 
         body {
-            font-family: 'SF Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            font-family: 'SF-Pro-Family', sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: var(--text-color);
             max-width: 800px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f8f8f8;
+            background-color: var(--bg-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        #background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.1;
         }
 
         header {
@@ -38,10 +62,10 @@
         }
 
         .font-showcase {
-            background-color: white;
+            background-color: var(--card-bg);
             padding: 40px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
             margin-bottom: 40px;
         }
 
@@ -67,10 +91,10 @@
         }
 
         .feature {
-            background-color: white;
+            background-color: var(--card-bg);
             padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            box-shadow: var(--card-shadow);
         }
 
         .feature h3 {
@@ -80,6 +104,7 @@
     </style>
 </head>
 <body>
+    <canvas id="background"></canvas>
     <header>
         <h1>SF Pro</h1>
         <h2>Apple's System Font</h2>
@@ -121,5 +146,61 @@
             <p>Includes various weights and widths to suit different design needs.</p>
         </div>
     </section>
+
+    <script>
+        // Dynamic background
+        const canvas = document.getElementById('background');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function drawBackground() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, getComputedStyle(document.documentElement).getPropertyValue('--bg-color'));
+            gradient.addColorStop(1, getComputedStyle(document.documentElement).getPropertyValue('--card-bg'));
+            
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < 50; i++) {
+                ctx.beginPath();
+                ctx.arc(
+                    Math.random() * canvas.width,
+                    Math.random() * canvas.height,
+                    Math.random() * 2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+                ctx.fill();
+            }
+        }
+
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            drawBackground();
+        });
+
+        resizeCanvas();
+        drawBackground();
+
+        // Dark mode detection and handling
+        function setColorScheme(scheme) {
+            document.documentElement.setAttribute('data-color-scheme', scheme);
+            drawBackground();
+        }
+
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        setColorScheme(darkModeMediaQuery.matches ? 'dark' : 'light');
+
+        darkModeMediaQuery.addListener((e) => {
+            setColorScheme(e.matches ? 'dark' : 'light');
+        });
+    </script>
 </body>
 </html>
